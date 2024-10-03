@@ -1,0 +1,81 @@
+{% extends "./main.html" %} {% load static %} {% block garageBlock %}
+
+{% block marqueBlock %}
+
+<!-- Here I put the list of marques, this is a rendering part -->
+<div class="card">
+    <div class="card-header">
+        <div class="row d-flex justify-content-between">
+            <div class="m-2">
+                <h4>Marques</h4>
+            </div>
+            <div class="m-2">
+                <a href="{% url 'marque_ajouter' %}" class="text-white">
+                    <button class="btn btn-secondary btn-round">
+                        <i class="fa fa-plus" title='ajouter une nouvelle option option'></i> Ajouter
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if messages %}
+        <ul class="list-group">
+            {% for message in messages %}
+            <li class="{{ message.tags }} list-group-item alert alert-warning">{{ message }}</li>
+            <script>
+                $(".alert").alert();
+            </script>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <table class="display table table-striped mt-2" id="option-table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" class='text-center'>Actions</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                {% for marque in marques %}
+                <tr>
+                    <td>{{ forloop.counter }}
+                    </td>
+                    <td>{{marque.nom}}</td>
+                    <td>{{marque.description}}</td>
+                    <td class='text-center'>
+                        <a href="{% url 'marque_editer' marque.slug %}">
+                            <button class="btn btn-primary ms-auto btn-sm" type="submit">
+                                <i class="fa fa-edit text-light"></i>
+                            </button>
+                        </a>
+
+                        <button class="btn btn-danger btn-sm supprimerMarque" type="submit" data-slug="{{marque.slug}}">
+                            <i class="fa fa-trash text-light "></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script text="text-javascript">
+    $(".supprimerMarque").click(function (e) { 
+        e.preventDefault();
+        if(confirm('Voulez vraiment supprimer cette marque')){
+            var itemSlug = $(this).attr('data-slug');
+            var url = `/garage/marques/supprimer/${itemSlug}/`; 
+            window.location.href = url;
+        }
+    });
+
+</script>
+
+{% endblock marqueBlock %}
+
+{% endblock garageBlock %}

@@ -1,0 +1,212 @@
+{% extends "../core/index.html" %} {% load static %} {% block content %}
+<div class="container">
+  <div class="page-inner">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h3 class="fw-bold mb-3">Tableau de bord</h3>
+      </div>
+      <div class="ms-md-auto py-2 py-md-0">
+        <p id="currentDateTime"></p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-primary bubble-shadow-small">
+                  <i class="fa fa-home" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class="card-category" title="personnel dans le systeme">Logements</p>
+                  <h4 class="card-title">{{total_logements}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-info bubble-shadow-small">
+                  <i class="fa fa-address-book" aria-hidden="true"></i>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class="card-category">Contrats</p>
+                  <h4 class="card-title">{{total_contracts}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-success bubble-shadow-small">
+                <i class="fas fa-money-check    "></i>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class="card-category">Total Paiment</p>
+                  <h4 class="card-title">{{total_paiements}} ($)</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                  <i class="fas fa-user fa-xs"></i>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class="card-category">Locataires</p>
+                  <h4 class="card-title">{{total_locataires}}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-round table-responsive">
+          <div class="card-header">
+            <div class="card-head-row">
+              <div class="card-title">Contrats statistiques (
+                <small id="helpId" class="form-text text-muted">5 derniers</small>)
+              </div>
+              <div class="card-tools">
+                <a href="{% url 'contrats' %}" class="btn btn-label-success btn-round btn-sm me-2">
+                  <span class="btn-label">
+                    <i class="fa fa-pencil"></i>
+                  </span> Voir plus
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <table class="table ">
+              <thead class="table-secondary">
+                  <th>#</th>
+                  <th>Logement</th>
+                  <th>Locataire</th>
+                  <th>Date Debut</th>
+                  <th>Date Fin</th>
+                  <th class="text-center">Montant-Garanti</th>
+                  <th class="text-center">Total Payements</th>
+                  <th class="text-center">Dettes</th>
+              </thead>
+              <tbody>
+
+                  
+                  {% if not contrats %}
+                      <tr>
+                          <td colspan="7" class="text-center"><h5>Aucune  reservation nest disponible maintenant</h5></td>
+                      </tr>
+                  {% endif %}
+                      
+                  {% for contrat in contrats %}
+                  <tr class="{% if contrat.debt >= 0 %} table-light {% endif %}">
+
+                      <td>{{contrat.id}}</td>
+                      <td> <span class="text-secondary"> {{contrat.logement.type}}</span>#{{contrat.logement.adresse}}</td>
+                      <td>{{contrat.locataire.first_name}}-{{contrat.locataire.last_name}}</td>
+                      <td>{{contrat.datedebut}}</td>
+                      <td>{{contrat.datefin}}</td>
+                      <td class="text-center">{{contrat.montantgaranti}}</td>
+                      <td class="text-center">{{contrat.total_payments}}</td>
+                      <td class="text-center">{{contrat.debt}}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('#statistiques-table').DataTable(
+
+    )
+  });
+
+  $(document).ready(function () {
+    $('#options-table').DataTable(
+
+    )
+  });
+</script>
+<script text="text-javascript">
+  $(document).ready(function () {
+    $.notify(
+      {
+        icon: "icon-bell",
+        title:
+          "Bienvenue Monsieur {{request.user.noms}}, nous vous souhaitons bon travail <br> Devise: {{institution.devise}}",
+        message: "Role:{{request.user.role}} ",
+      },
+      {
+        type: "secondary",
+        placement: {
+          from: "bottom",
+          align: "right",
+        },
+        time: 1000,
+      }
+    );
+    function updateCurrentTime() {
+      // Get the current date and time
+      const currentDate = new Date();
+
+      // Format the date and time as desired
+      const formattedDate = currentDate.toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      });
+
+      // Update the paragraph with the formatted date and time
+      $("#currentDateTime").html(
+        `<span class='text-secondary'> ${formattedDate} </span>`
+      );
+    }
+
+    // Update the time every second
+    setInterval(updateCurrentTime, 1000);
+
+    // Initial update
+    updateCurrentTime();
+  });
+</script>
+
+{% endblock content %}

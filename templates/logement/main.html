@@ -1,0 +1,90 @@
+{% extends "../core/index.html" %} {% load static %} {% block content %}
+<div class="container">
+    <div class="page-inner">
+        <div class="page-header mb-0">
+            <h3 class="fw-bold mb-1">Gestion logements</h3>
+        </div>
+        <div class="row">
+            {% if messages %}
+            <ul class="list-group">
+                {% for message in messages %}
+                <li class="{{ message.tags }} list-group-item alert alert-warning">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% block logementBlock %} 
+
+            <div class="col-md-12">
+                <div class="card shadow-none" style="background-color: inherit;">
+                    <div class="card-header d-flex justify-content-between">
+                                <div class="m-0">
+                                    <h4>Logements</h4>
+                                </div>
+                                <div class="m-0">
+                                    <a href="{% url 'creer_logement' %}" class="text-white">
+                                        <button class="btn btn-secondary btn-round">
+                                            <i class="fa fa-plus" title='ajouter une nouvelle option option'></i> Creer
+                                        </button>
+                                    </a>
+                                </div>
+                    </div>
+                    <div class="card-body">
+                       
+                        <div class="tab-content mt-2 mb-3" id="pills-without-border-tabContent">
+                            <table class="display-1 table-responsive table mt-2 table-head-bg-secondary">
+                                <thead>
+                                    <tr>
+                                        <th>id</th>
+                                        <th>type</th>
+                                        <th>surface</th>
+                                        <th>disponible</th>
+                                        <th class='text-center'>Actions</th>
+                                    </tr> 
+                                </thead>
+                                <tbody>
+                                    {% for logement in logements %}
+                                    <tr>
+                                        <td>{{logement.id}}</td> 
+                                        <td>{{logement.type}}</td>
+                                        <td>{{logement.surface}}    {{logement.disponible}}</td>
+                                      
+                                        {% if logement.disponible %}
+                                            Oui
+                                        {% else %}
+                                        <td>Non</td>
+                                        {% endif %}
+                                            
+                                        <td class='text-center'>
+                                            <a href="{% url 'editer_logement' logement.id %}">
+                                                <button class="btn btn-primary ms-auto btn-sm" type="submit">
+                                                    <i class="fa fa-edit text-light"></i>
+                                                </button>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm supprimerLogement" type="submit" data-id="{{logement.id}}">
+                                                <i class="fa fa-trash text-light "></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock logementBlock %}
+            
+        </div>
+    </div>
+</div>
+<script text="text-javascript">
+    $(".supprimerLogement").click(function (e) { 
+        e.preventDefault();
+        if(confirm('Voulez vraiment supprimer ce logement ?')){
+            var id = $(this).attr('data-id');
+            var url = `/logements/supprimer/${id}/`; 
+            window.location.href = url;
+        }
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,109 @@
+{% extends './index.html' %}
+{% block contratBlock %}
+<div class="card">
+    <form id="vehiculeSelectionForm" method="POST">
+        {% csrf_token %}
+
+        <div class="card-header d-flex justify-content-start">
+            <a href="{% url 'contrats' %}"> <i class="fa fa-arrow-circle-left text-secondary"
+                    style="font-size: 30px;" aria-hidden="true"></i></a>
+            <h3 class="text-center text-secondary " style="margin-left: 10px;">Editer le contrat</h3>
+        </div>
+
+        <div class="card-body">
+            <div>
+                {% csrf_token %}
+                {% if form.errors %}
+                {% for field in form %}
+                {% for error in field.errors %}
+                <div class="alert alert-danger small" role="alert">
+                    {{field.name}} : {{ error }}!
+                </div>
+                {% endfor %}
+                {% endfor %}
+                {% endif %}
+            </div>
+        <div class="row">
+            <div class="mt-2">
+                {% if messages %}
+                <ul class="list-group">
+                    {% for message in messages %}
+                    <li class="{{ message.tags }} list-group-item alert alert-warning">{{ message }}</li>
+                   
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <div class="mb-3 col-6">
+                <label for="vehiculeSelect" class="form-label">Choisir le vehicule le type de logement du contrat 
+                    (si pas encore creer veuillez le creer en cliquant <a href="{% url 'creer_logement' %}">ici</a> )
+                </label>
+                <select required name="logement" class="form-select" id="logement">
+                    <option value="">Choisir </option>
+                    {% for logement in logements %} 
+                    <option value="{{ logement.id }}"
+                    
+                    {% if contrat.logement.id == logement.id %}
+                        selected
+                    {% endif %}
+                    >
+                        {{logement.type}}-{{logement.adresse}}
+                    </option>
+                    {% endfor %}
+                </select>               
+            </div>
+            <div class="mb-3 col-6">
+                <label  class="form-label">Choisir le locataire (si vous ne l'avez encore créé veuillez le créer en cliquant <a href="{% url 'creerlocataire' %}">ici</a> ) <br>
+                </label>
+                <select required name="locataire" class="form-select" id="locataire">
+                    <option value="">Choisir </option>
+                        {% for locataire in locataires %} 
+                    <option value="{{ locataire.id }}"
+                {% if contrat.locataire.id == locataire.id %}
+                    selected
+                {% endif %}
+                    >
+                        {{locataire.first_name}}-{{locataire.last_name}}#{{locataire.email}}
+                    </option>
+                    {% endfor %}
+                </select>               
+            </div>
+                    
+            <div class="col-6">
+                <div class="form-group">
+                <label for="">Date debut</label>
+                {{ form.datedebut }}
+                <!-- <input required type="date" class="form-control" value="{{ contrat.datedebut|date:'m-d-Y' }}" name="datedebut" id="datedebut" /> -->
+                </div>
+            </div>
+
+            <div class="col-6">
+                    <label for="">Date de la fin</label>
+                    {{ form.datefin }}
+            </div> 
+
+            <div class="col-6">
+                <div class="form-group">
+                <label for="">Montant-garanti ($)</label>
+                <input required type="number" step="0.01"
+                    class="form-control" value="{{contrat.montantgaranti}}" name="montantgaranti" id="montantgaranti" aria-describedby="helpId" placeholder="Entrer le garanti en dollars">
+                </div>
+            </div> 
+            <div class="col-6">
+                <div class="form-group">
+                <label for="">Termes du contrat</label>
+                <textarea required  name="termes_du_contrat" class="form-control form-control" id="termes_du_contrat">{{contrat.termes_du_contrat}}</textarea>
+            </div> 
+        </div>
+        
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <a href="{% url 'contrats' %}" class="btn btn-danger">Annuler</a>
+            <button type="submit" class="btn btn-secondary"> <i class="fa fa-plus" aria-hidden="true"></i>
+                Confirmer la modification </button>
+        </div>
+
+    </form>
+
+</div>
+{% endblock contratBlock %}

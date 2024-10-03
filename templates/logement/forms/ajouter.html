@@ -1,0 +1,62 @@
+{% extends "../main.html" %} {% load static %}
+{% block logementBlock %}
+<div class="card">
+    <div class="card-header">
+        <div class="row d-flex justify-content-between">
+            <div class="col-4">
+                <h2> <a href="{% url 'logements' %}" class="text-secondary"><i class="fa fa-arrow-circle-left"
+                            aria-hidden="true"></i> </a></h2>
+            </div>
+            <div class="col-8 text-start">
+                <h2 class="text-secondary">Enregister ou creer les info sur logement</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'creer_logement' %}">
+            {% csrf_token %}
+            <div class="row mb-1">
+
+                <div class="form-group col-md-12">
+                    <label for="">Adresse</label>
+                    <input required type="text" class="form-control" name="adresse" id="adresse" aria-describedby="helpId"
+                        placeholder="adresse">
+                    <small id="helpId" class="form-text text-muted">Ex:Avenue Kama N°10</small>
+                </div>
+                <div class="form-group col-md-12">
+                      <label for="">Type</label>
+                      <select required class="form-control" name="type" id="type">
+                        <option value="">Choisir</option>
+                        <option value="salle">Salle</option>
+                        <option value="appartement">Appartement</option>
+                        <option value="maison">Maison</option> 
+                        <option value="terrain">Terrain</option> 
+                      </select>
+                </div>
+               
+                <div class="form-group col-md-12">
+                    <label for="">Surface</label>
+                    <input required class="form-control" name="surface" id="surface"/>
+                </div>
+                
+                <div class="form-group col-md-12 mt-2 ">
+                    {% csrf_token %}
+                    {% if form.errors %}
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <div class="alert alert-danger small" role="alert">
+                        {{field.name}} : {{ error }}!
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="col-md-12 justify-content-center align-content-center d-flex">
+                    <button type="submit" class="btn btn-secondary text-center">Confirmer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock logementBlock %}

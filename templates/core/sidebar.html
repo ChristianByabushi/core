@@ -1,0 +1,162 @@
+{% load static %}
+<div class="sidebar" data-background-color="dark">
+  <div class="sidebar-logo">
+    <!-- Logo Header -->
+    <div class="logo-header" data-background-color="dark">
+      <a href="{% url 'index' %}" class="logo">
+        <h3 class="mt-1 text-white" style="padding-left: 0px">Gestion-Loyer App</h3>
+      </a>
+      <div class="nav-toggle">
+        <button class="btn btn-toggle toggle-sidebar">
+          <i class="gg-menu-right"></i>
+        </button>
+        <button class="btn btn-toggle sidenav-toggler">
+          <i class="gg-menu-left"></i>
+        </button>
+      </div>
+      <button class="topbar-toggler more">
+        <i class="gg-more-vertical-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-wrapper scrollbar scrollbar-inner">
+    <div class="sidebar-content">
+      <ul class="nav nav-secondary">
+        {% if request.user.is_authenticated %}
+        <li
+          class="nav-item {% if request.resolver_match.url_name == 'index' %} active{% endif%}{% if request.resolver_match.url_name == 'index' %} active{% endif%}"
+        >
+          <a href="{% url 'index' %}">
+            <i class="fa fa-home" aria-hidden="true"></i>
+            <p>Accueil</p>
+          </a>
+        </li>
+
+    
+
+        {% endif %}
+
+        {% if request.user.is_superuser %}
+
+        <li            
+        class="nav-item {% if request.resolver_match.url_name == 'logements' %}active{% endif%} {% if request.resolver_match.url_name == 'creer_logement' %} active {% endif%} {% if request.resolver_match.url_name == 'supprimer_logement' %}active{% endif%} {% if request.resolver_match.url_name == 'editer_logement' %}active{% endif%} 
+          "
+          >
+          <a href="{% url 'logements' %}">
+            <i class="fa fa-home" aria-hidden="true"></i>
+            <p>Logements</p>
+          </a>
+        </li>
+
+        <li
+          class="nav-item {% if request.resolver_match.url_name == 'locataires' %} active{% endif%} 
+          {% if request.resolver_match.url_name == 'supprimerlocataire' %} active{% endif%}
+          {% if request.resolver_match.url_name == 'creerlocataire' %} active{% endif%}
+          {% if request.resolver_match.url_name == 'editerlocataire' %} active{% endif%}
+          "
+        >
+          <a href="{% url 'locataires' %}">
+            <i class="fa fa-bus-alt"></i>
+            <p>Locataires</p>
+          </a>
+        </li>
+
+        <li
+          class="nav-item {% if request.resolver_match.url_name == 'contrats' %} active{% endif%} 
+          {% if request.resolver_match.url_name == 'supprimer_contrat' %} active{% endif%}
+          {% if request.resolver_match.url_name == 'editer_contrat' %} active{% endif%}
+          {% if request.resolver_match.url_name == 'creer_contrat' %} active{% endif%}
+          "
+        >
+          <a href="{% url 'contrats' %}">
+            <i class="fa fa-paper fa-paperclip" aria-hidden="true"></i>
+            <p>Contrats</p>
+          </a>
+        </li>
+
+        
+        {% if request.user.is_superuser or request.user.role == 'Financier' %}
+        <li
+        class="nav-item {% if request.resolver_match.url_name == 'paiements' %} active{% endif%} 
+        {% if request.resolver_match.url_name == 'supprimer_paiements' %} active{% endif%}
+        {% if request.resolver_match.url_name == 'editer_paiements' %} active{% endif%}
+        {% if request.resolver_match.url_name == 'creer_paiements' %} active{% endif%}
+        "
+      >
+        <a href="{% url 'paiements' %}">
+          <i class="fa fa-money-check" aria-hidden="true"></i>
+          <p>Payements</p>
+        </a>
+      </li>
+      
+      {% else %}
+      <li
+      class="nav-item {% if request.resolver_match.url_name == 'payements' %} active{% endif%} 
+      {% if request.resolver_match.url_name == 'ajouter_paiement' %} active{% endif%}"
+    >
+      <a href="{% url 'payements' %}">
+        <i class="fa fa-money-check" aria-hidden="true"></i>
+        <p>Mes Payements</p>
+      </a>
+     </li>
+      {% endif %}
+        <li class="nav-item">
+          <a href="{% url 'logout' %}">
+            <i class="fas fa-arrow-left"></i>
+            <p>Deconnexion</p>
+          </a>
+        </li>
+
+        {% endif%} {% if 'Administration' in groups %}
+        <li class="nav-section">
+          <span class="sidebar-mini-icon">
+            <i class="fa fa-ellipsis-h"></i>
+          </span>
+          <h4 class="text-section">Gestion Parametres</h4>
+        </li>
+
+        <li
+          class="nav-item {% if request.resolver_match.url_name == 'comptes' %} active{% endif%}{% if request.resolver_match.url_name == 'groupes' %} active{% endif%}"
+        >
+          <a data-bs-toggle="collapse" href="#tables">
+            <i class="fas fa-table"></i>
+            <p>Comptes</p>
+            <span class="caret"></span>
+          </a>
+          <div class="collapse" id="tables">
+            <ul class="nav nav-collapse">
+              <li>
+                <a
+                  href='{% url "comptes" %}'
+                  class="{% if request.resolver_match.url_name == 'comptes' %}active-sublink{% endif%}"
+                >
+                  <span class="sub-item">Comptes</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href='{% url "groupes" %}'
+                  class="{% if request.resolver_match.url_name == 'groupes' %}active-sublink{% endif%}"
+                >
+                  <span class="sub-item">Groupes</span>
+                </a>
+              </li>
+              <li
+                class="nav-item {% if request.resolver_match.url_name == 'institution' %} active{% endif%}{% if request.resolver_match.url_name == 'groupes' %} active{% endif%}"
+              >
+                <a href="{% url 'institution' %}">
+                  <i class="fas fa-school"></i>
+                  <p>Institution</p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- End Sidebar -->

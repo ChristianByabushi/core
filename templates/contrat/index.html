@@ -1,0 +1,155 @@
+{% extends "../core/index.html" %} {% load static %} {% block content %}
+<div class="container">
+    <div class="page-inner">
+        <div class="page-header mb-0 d-flex justify-content-between">
+            <h2 class="fw-bold mb-1 text-secondary">Gestion Contrats</h2>
+
+            {% if not request.resolver_match.url_name == 'creer_contrat' %}
+            <a class="btn btn-secondary mb-1" href="{% url 'creer_contrat' %}"> <i class="fa fa-plus-circle"
+                    aria-hidden="true"></i> Commencer un contrat</a>
+            {% endif %}
+        </div>
+
+        {% block contratBlock %}
+        <div class="card">
+            <div class="card-header"> 
+                <div class="mt-2">
+                    {% if messages %}
+                    <ul class="list-group">
+                        {% for message in messages %}
+                        <li class="{{ message.tags }} list-group-item alert alert-warning">{{ message }}</li>
+                        <script>
+                            $(".alert").alert();
+                        </script>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            
+                <!-- Search Form -->
+                <div class="row mt-lg-1 search-row">
+                    <form method="GET" action="{% url 'contrats' %}" class="row">
+                        
+                        <!-- Filter by Locataire Name -->
+                        <div class="col-lg-4 col-sm-5 col-12 mt-lg-1 mt-1">
+                            <input type="text" placeholder="Entrer le nom ou post nom du locataire" id="locataire" name="locataire" class="form-control"
+                            value="{{ filters.locataire }}">
+                        </div>
+            
+                        <!-- Filter by Date Range: Start Date -->
+                        <div class="col-lg-2 col-sm-3 col-5 mb-sm-1">
+                            <input type="date" id="debutDate" name="debutDate" class="form-control"
+                                value="{{ filters.debutDate }}" title="Sélectionner le contrat à partir de cette date">
+                        </div>
+            
+                        <div class="col-1 mt-md-2 mb-sm-1 text-center">
+                            <span> -- </span>
+                        </div>
+            
+                        <!-- Filter by Date Range: End Date -->
+                        <div class="col-lg-2 col-sm-3 col-5">
+                            <input type="date" id="dateFin" name="dateFin" title="Sélectionner le contrat jusqu'à cette date" class="form-control"
+                                value="{{ filters.dateFin }}">
+                        </div>
+            
+                        <!-- Filter by Logement -->
+                        <div class="col-lg-2 col-6">
+                            <select name="logement" id="logement" class="form-select form-control">
+                                <option value="">Par logements</option>
+                                {% for logement in logements %}
+                                <option value="{{ logement.id }}" 
+                                    {% if filters.logement == logement.id|stringformat:"s" %} selected {% endif %}>
+                                    {{ logement.adresse }} ##{{logement.type}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+            
+                        <!-- Search Button -->
+                        <div class="d-block col-lg-3 col-12 mt-lg-1 mt-2">
+                            <button type="submit" class="btn btn-secondary"> 
+                                <i class="fa fa-search" aria-hidden="true"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+
+            <div class="card-body table-responsive">
+                <!-- Reservation -->
+                <table class="table ">
+                    <thead class="table-secondary">
+                        <th>#</th>
+                        <th>Logement</th>
+                        <th>Locataire</th>
+                        <th>Date Debut</th>
+                        <th>Date Fin</th>
+                        <th class="text-center">Montant-Garanti</th>
+                        <th class="text-center">Total Payements</th>
+                        <th class="text-center">Dettes</th>
+                        <th class="text-center">Actions</th>
+                    </thead>
+                    <tbody>
+
+                        
+                        {% if not contrats %}
+                            <tr>
+                                <td colspan="7" class="text-center"><h5>Aucune  reservation nest disponible maintenant</h5></td>
+                            </tr>
+                        {% endif %}
+                            
+                        {% for contrat in contrats %}
+                        <tr class="{% if contrat.debt >= 0 %} table-light {% endif %}">
+
+                            <td>{{contrat.id}}</td>
+                            <td> <span class="text-secondary"> {{contrat.logement.type}}</span>#{{contrat.logement.adresse}}</td>
+                            <td>{{contrat.locataire.first_name}}-{{contrat.locataire.last_name}}</td>
+                            <td>{{contrat.datedebut}}</td>
+                            <td>{{contrat.datefin}}</td>
+                            <td class="text-center">{{contrat.montantgaranti}}</td>
+                            <td class="text-center">{{contrat.total_payments}}</td>
+                            <td class="text-center">{{contrat.debt}}</td>
+
+                            <td class="text-center">
+                                        <a href="{% url 'editer_contrat' contrat.id %}">
+                                            <button class="btn btn-primary ms-auto btn-sm" type="submit">
+                                                <i class="fa fa-edit text-light"></i>
+                                            </button>
+                                        </a>
+
+                                        <a href="{% url 'generate_pdf_contrat' contrat.id %}">
+                                            <button class="btn btn-warning ms-auto btn-sm" type="submit">
+                                                <i class="fa fa-warning"></i>
+                                            </button>
+                                        </a>
+
+                                        <button class="btn btn-danger btn-sm supprimerContrat" type="submit" data-id="{{contrat.id}}">
+                                            <i class="fa fa-trash text-light "></i>
+                                        </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+       
+
+            </div>
+        </div>
+        {% endblock contratBlock %}
+
+    </div>
+</div>
+<script text="text-javascript">
+    $(".supprimerContrat").click(function (e) { 
+        e.preventDefault();
+        if(confirm('Voulez vraiment supprimer ce contrat, ca peut etre risquant de perdre vos donnees ?')){
+            var id = $(this).attr('data-id');
+            var url = `/contrats/supprimer/${id}/`; 
+            window.location.href = url;
+        }
+    });
+</script>
+
+{% endblock content %}
